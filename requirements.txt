@@ -1,0 +1,12 @@
+pandas
+seaborn
+scikit-learn
+xgboost
+lightgbm
+catboost
+joblib
+optuna
+sklego 
+optuna 
+category_encoders
+nltk
