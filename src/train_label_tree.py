@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn import metrics
 from sklearn import preprocessing
+from sklearn.utils import compute_sample_weight
 
 import config
 import model_dispatcher
@@ -73,8 +74,8 @@ def run(fold, model):
 
     ############################## REDUCE RISK OF LEAKAGE#############################################
     # Avoid data leakage: Perform binning and filling separately for train and validation
-    df_train, df_valid, _ = analyze_and_fill_region_from_quantite_vendue(df_train, df_valid, quantile_bins=5)
-    df_train, df_valid, _ = analyze_and_fill_promotion_from_quantite_vendue(df_train, df_valid, quantile_bins=5)
+    #df_train, df_valid, _ = analyze_and_fill_region_from_quantite_vendue(df_train, df_valid, quantile_bins=5)
+    #df_train, df_valid, _ = analyze_and_fill_promotion_from_quantite_vendue(df_train, df_valid, quantile_bins=5)
     ############################################################################
 
 
@@ -88,10 +89,9 @@ def run(fold, model):
     # Initialize and fit the model
     # Count target frequencies
     #weights = 1 / df_train[config.TARGET_COL].map(df_train[config.TARGET_COL].value_counts())
+    weights = compute_sample_weight('balanced', y_train)
     clf = model_dispatcher.models[model]
-    clf.fit(x_train, y_train, 
-            #sample_weight=weights
-            )
+    clf.fit(x_train, y_train, sample_weight=weights)
 
     # Predictions and metrics
     preds = clf.predict(x_valid)
